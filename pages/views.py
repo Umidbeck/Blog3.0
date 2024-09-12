@@ -3,17 +3,21 @@ from .models import Post, Category, Hashtag
 from django.shortcuts import redirect
 from .forms import CommentForm
 
+
 class HomePageView(ListView):
     model = Post
     template_name = 'index.html'
     context_object_name = 'posts'  # Bosh sahifada oxirgi postlarni ko'rsatish
     ordering = ['-date']  # Yangilanish tartibi
 
+
 class AboutPageView(TemplateView):
     template_name = 'about.html'
 
+
 class ContactPageView(TemplateView):
     template_name = 'contact.html'
+
 
 class DetailPageView(DetailView):
     model = Post
@@ -22,10 +26,10 @@ class DetailPageView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['hashtags'] = self.object.hashtags.all()  # Hashtaglarni qo'shish
-        context['comments'] = self.object.comments.all()  # Izohlarni qo'shish
+        context['hashtags'] = self.object.hashtags.all()  # Hashtaglarni olish
+        context['comments'] = self.object.comments.all()  # Izohlarni olish
         context['form'] = CommentForm()  # Izoh formasi
-        context['all_posts'] = Post.objects.all()  # Barcha postlarni qo'shish
+        context['all_posts'] = Post.objects.all()  # Barcha postlarni olish
         return context
 
     def post(self, request, *args, **kwargs):
@@ -38,6 +42,7 @@ class DetailPageView(DetailView):
             comment.save()
             return redirect('post_detail', pk=self.object.pk)
         return redirect('post_detail', pk=self.object.pk)
+
 
 class BlogPageView(ListView):
     model = Post
@@ -58,5 +63,3 @@ class SearchResultsView(ListView):
         if query:
             query = query.lower()  # Kichik harfga o'tkazish
             return Post.objects.filter(title__icontains=query)
-        # return Post.objects.none()  # Agar qidiruv so'zi bo'lmasa, bo'sh queryset
-
